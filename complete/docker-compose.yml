@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - VERSION=docker
+      - PLEX_CLAIM=claim-4qc_N8WuHFyMh-p9eo1K
+    volumes:
+      - /home/pi/luna_data/plex/config:/config
+      - /mnt/ext_drive/luna_library:/data
+    restart: unless-stopped
+
+  snapdrop:
+    image: lscr.io/linuxserver/snapdrop:latest
+    container_name: snapdrop
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /home/pi/luna_data/snapdrop/config:/config
+      - /mnt/ext_drive/luna_library:/data
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped

@@ -1,0 +1,40 @@
+version: '2'
+
+services:
+  db:
+    image: tobi312/rpi-mariadb:10.3
+    environment:
+      MYSQL_ROOT_PASSWORD: infinity0
+      MYSQL_USER: tgavara
+      MYSQL_PASSWORD: infinity0
+      MYSQL_DATABASE: filerun
+      PUID: 1000
+      PGID: 1000
+      TZ: Asia/Kolkata
+    volumes:
+      - /home/pi/luna_data/filerun/db:/var/lib/mysql
+    restart: unless-stopped
+
+  web:
+    image: filerun/filerun:arm64v8
+    environment:
+      FR_DB_HOST: db
+      FR_DB_PORT: 3306
+      FR_DB_NAME: filerun
+      FR_DB_USER: tgavara
+      FR_DB_PASS: infinity0
+      APACHE_RUN_USER: pi
+      APACHE_RUN_USER_ID: 1000
+      APACHE_RUN_GROUP: pi
+      APACHE_RUN_GROUP_ID: 1000
+    depends_on:
+      - db
+    links:
+      - db:db
+    ports:
+      - "81:80"
+    volumes:
+      - /home/pi/luna_data/filerun/html:/var/www/html
+      - /home/pi:/user-files
+      - /mnt/ext_drive/luna_library:/user-files/ext_drive
+    restart: unless-stopped
